@@ -8,15 +8,17 @@ const product = require('../models/product');
 
 router.get('/', (req, res, next) => {
     Product.find().
-        select('_id name price').
         then(doc => {
-
         const respons = {
             doc : doc.map(doc=>{
                 return{
                     name : doc.name ,
                     price : doc.price ,
-                    _id : doc._id 
+                    _id : doc._id ,
+                    date : doc.date ,
+                    state : doc.state ,
+                    color : doc.color ,
+                    model : doc.model
                 }
             })
         }
@@ -26,7 +28,7 @@ router.get('/', (req, res, next) => {
             })
         }).
         catch(err => {
-            res.status(404).json({
+            res.status(405).json({
                 massage: err
             })
         })
@@ -36,7 +38,13 @@ router.get('/', (req, res, next) => {
 router.post('/addproduct', (req, res, next) => {
     const product = new Product({
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        date : req.body.date ,
+        state : req.body.state ,
+        color : req.body.color,
+        model : req.body.model
+        
+
     });
 
     product.save()
@@ -46,7 +54,7 @@ router.post('/addproduct', (req, res, next) => {
             })
         })
         .catch(err => {
-            res.status(404).json({
+            res.status(406).json({
                 massage: err
             })
         })
@@ -55,14 +63,14 @@ router.post('/addproduct', (req, res, next) => {
 })
 
 router.get('/:productID', (req, res, next) => {
-    Product.find({ _id: req.params.productID }).
-        then(resulalt => {
+    product.find({ _id: req.params.productID }).
+        then(doc=> {
             res.status(200).json({
-                product: resulalt
+                product: doc
             })
         }).
         catch(err => {
-            res.status(404).json({
+            res.status(409).json({
                 massage: err
             })
         })
@@ -74,6 +82,10 @@ router.patch('/:productID' ,(req , res , next)=>{
     const newproduct = {
         name : req.body.name ,
         price : req.body.price ,
+        date : req.body.date ,
+        state : req.body.state ,
+        color : req.body.color ,
+        model : req.body.model
     }
 
     product.update({_id : req.params.productID } ,{$set : newproduct}).
@@ -83,7 +95,7 @@ router.patch('/:productID' ,(req , res , next)=>{
         })
     }).
     catch(err => {
-        res.status(404).json({
+        res.status(408).json({
             massage: err
         })
     })
@@ -99,7 +111,7 @@ router.delete('/:productID' , (req , res , next)=>{
         })
     }).
     catch(err => {
-        res.status(404).json({
+        res.status(409).json({
             massage: err
         })
     })

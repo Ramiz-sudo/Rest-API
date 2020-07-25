@@ -8,7 +8,10 @@ user : {
     required : true
 }  ,
 product :{
-    type : Array ,
+    
+    type : mongoose.Schema.Types.ObjectId ,
+    ref : 'product' ,
+    required : true
     
 }  
 
